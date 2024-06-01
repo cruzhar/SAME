@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using System.Data.SqlClient;
+using static API_SAME.Models.Empresa;
 
 namespace API_SAME.Controllers
 {
@@ -61,6 +62,90 @@ namespace API_SAME.Controllers
         }
 
 
+
+        [HttpPost]
+
+        public IActionResult Post([FromBody] EmpresaRequest request)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(con))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand("TB_EMPRESA_I_SP", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@NOMBRE_EMRESA",request.nombreEmpresa);
+                        cmd.Parameters.AddWithValue("@DIRECCION_EMPRESA", request.direccionEmpresa);
+                        cmd.Parameters.AddWithValue("@TELEFONO_EMPRESA", request.telefonoEmpresa);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return Ok("Registro Insertado Satisfactoriamente");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "No se pudo ingresar el dato por: " + ex.Message);
+            }
+
+        }
+
+
+        [HttpPost("Update")]
+
+        public IActionResult Post([FromBody] EmpresaUsadateRequest request)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(con))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand("TB_EMPRESA_U_SP", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ID_EMPRESA", request.idEmpresa);
+                        cmd.Parameters.AddWithValue("@NOMBRE_EMRESA", request.nombreEmpresa);
+                        cmd.Parameters.AddWithValue("@DIRECCION_EMPRESA", request.direccionEmpresa);
+                        cmd.Parameters.AddWithValue("@TELEFONO_EMPRESA", request.telefonoEmpresa);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return Ok("Registro Modificado Satisfactoriamente");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "No se pudo ingresar el dato por: " + ex.Message);
+            }
+
+        }
+
+        [HttpPost("Delete")]
+
+        public IActionResult Post([FromBody] EmpresaDeleteRequest request)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(con))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand("TB_EMPRESA_D_SP", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ID_EMPRESA", request.idEmpresa);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return Ok("Registro Eliminado Satisfactoriamente");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "No se pudo ingresar el dato por: " + ex.Message);
+            }
+
+        }
 
 
 
